@@ -3,7 +3,14 @@ const expect = require('chai').expect;
 const coTest = require('../src/coTest');
 const CarInsurance = coTest.CarInsurance;
 const Product = coTest.Product;
-const { LOW_COVERAGE, MEDIUM_COVERAGE, FULL_COVERAGE, MEGA_COVERAGE, SPECIAL_FULL_COVERAGE, SUPER_SALE } = require('../src/constants');
+const {
+  LOW_COVERAGE,
+  MEDIUM_COVERAGE,
+  FULL_COVERAGE,
+  MEGA_COVERAGE,
+  SPECIAL_FULL_COVERAGE,
+  SUPER_SALE
+} = require('../src/constants');
 
 const carInsuarenceExample = () => new CarInsurance([
   new Product(LOW_COVERAGE, 1, 20),
@@ -14,7 +21,7 @@ const carInsuarenceExample = () => new CarInsurance([
   new Product(SUPER_SALE, 1, 20)
 ]);
 
-const copyCiState = ci => new CarInsurance(ci.products.map( p => new Product(p.name, p.sellIn, p.price)))
+const copyCiState = ci => new CarInsurance(ci.products.map(p => new Product(p.name, p.sellIn, p.price)))
 
 const lowUpdateTest = (p, sellIn) => {
   p = p - 1
@@ -46,20 +53,26 @@ const sfUpdateTest = (p, sellIn) => {
     }
     p = p + 1
   }
+
+  if (sellIn < 0) {
+    p = 0
+  }
+  
   return p
 }
 const ssUpdateTest = p => p - 2
 
-describe("Co Test", function() {
+describe("Co Test", function () {
 
-  it("Crear productos y actualizarlos corre sin excepciones.", function() {
+  it("Crear productos y actualizarlos corre sin excepciones.", function () {
     const ci = carInsuarenceExample();
     const products = ci.updatePrice();
     expect(products.length).equal(6);
   });
 
-  it("updatePrice actualiza los precios correctamente.", function() {
-    const ci = carInsuarenceExample(), ITERATIONS = 10;
+  it("updatePrice actualiza los precios correctamente.", function () {
+    const ci = carInsuarenceExample(),
+      ITERATIONS = 10;
     let products, ciPrevState = copyCiState(ci);
 
     console.log(`Original products`)
@@ -69,7 +82,7 @@ describe("Co Test", function() {
       products = ci.updatePrice();
       console.log(`Updating price day ${i}`);
       console.log(products);
-      
+
       /* LOW_COVERAGE */
       expect(products[0].price).equal(lowUpdateTest(ciPrevState.products[0].price, ciPrevState.products[0].sellIn));
       /* MEDIUM_COVERAGE */
