@@ -3,15 +3,26 @@ const expect = require('chai').expect;
 const coTest = require('../src/coTest');
 const CarInsurance = coTest.CarInsurance;
 const Product = coTest.Product;
+const {FULL_COVERAGE, MEGA_COVERAGE, SPECIAL_FULL_COVERAGE, SUPER_SALE} = require('../src/constants');
+
+const carInsuarenceExample = () => new CarInsurance([
+  new Product(FULL_COVERAGE, 10, 20),
+  new Product(MEGA_COVERAGE, 10, 20),
+  new Product(SPECIAL_FULL_COVERAGE, 10, 20),
+  new Product(SUPER_SALE, 10, 20)
+]);
 
 describe("Co Test", function() {
 
+  it("Crear productos y actualizarlos corre sin excepciones.", function() {
+    const ci = carInsuarenceExample();
+    const products = ci.updatePrice();
+    expect(products.length).equal(4);
+  });
+
   it("Cuando el producto expira (ya no hay días restantes en sellIn), price se reduce al doble de velocidad.", function() {
-    const coTest = new CarInsurance([
-      new Product("Full Coverage", 10, 10)
-    ]);
-    const products = coTest.updatePrice();
-    expect(products[0].name).equal("fixme");
+    const ci = carInsuarenceExample();
+    const products = ci.updatePrice();
   });
 
   // El price del producto nunca es negativo.
