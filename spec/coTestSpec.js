@@ -57,7 +57,7 @@ const sfUpdateTest = (p, sellIn) => {
   if (sellIn < 0) {
     p = 0
   }
-  
+
   return p
 }
 const ssUpdateTest = p => p - 2
@@ -72,7 +72,7 @@ describe("Co Test", function () {
 
   it("updatePrice actualiza los precios correctamente.", function () {
     const ci = carInsuarenceExample(),
-      ITERATIONS = 10;
+      ITERATIONS = 3;
     let products, ciPrevState = copyCiState(ci);
 
     console.log(`Original products`)
