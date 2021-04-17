@@ -14,9 +14,29 @@ const carInsuarenceExample = () => new CarInsurance([
   new Product(SUPER_SALE, 1, 20)
 ]);
 
-const lowUpdateTest = p => p - 1
-const medUpdateTest = p => p - 1
-const fullUpdateTest = p => p + 1
+const copyCiState = ci => new CarInsurance(ci.products.map( p => new Product(p.name, p.sellIn, p.price)))
+
+const lowUpdateTest = (p, sellIn) => {
+  p = p - 1
+  if (sellIn < 0) {
+    p = p - 1
+  }
+  return p
+}
+const medUpdateTest = (p, sellIn) => {
+  p = p - 1
+  if (sellIn < 0) {
+    p = p - 1
+  }
+  return p
+}
+const fullUpdateTest = (p, sellIn) => {
+  p = p + 1
+  if (sellIn < 0) {
+    p = p + 1
+  }
+  return p
+}
 const megaUpdateTest = p => p
 const sfUpdateTest = (p, sellIn) => {
   p = p + 1
@@ -39,25 +59,33 @@ describe("Co Test", function() {
   });
 
   it("updatePrice actualiza los precios correctamente.", function() {
-    const ci = carInsuarenceExample(), ciInitialState = carInsuarenceExample();
-    let products;
+    const ci = carInsuarenceExample(), ITERATIONS = 10;
+    let products, ciPrevState = copyCiState(ci);
 
+    console.log(`Original products`)
     console.log(ci.products);
-    products = ci.updatePrice();
-    console.log(products);
-    
-    /* LOW_COVERAGE */
-    expect(products[0].price).equal(lowUpdateTest(ciInitialState.products[0].price));
-    /* MEDIUM_COVERAGE */
-    expect(products[1].price).equal(medUpdateTest(ciInitialState.products[1].price));
-    /* FULL_COVERAGE */
-    expect(products[2].price).equal(fullUpdateTest(ciInitialState.products[2].price));
-    /* MEGA_COVERAGE */
-    expect(products[3].price).equal(megaUpdateTest(ciInitialState.products[3].price));
-    /* SPECIAL_FULL_COVERAGE */
-    expect(products[4].price).equal(sfUpdateTest(ciInitialState.products[4].price, ciInitialState.products[4].sellIn));
-    /* SUPER_SALE */
-    expect(products[5].price).equal(ssUpdateTest(ciInitialState.products[5].price));
+
+    for (let i = 0; i < ITERATIONS; i++) {
+      products = ci.updatePrice();
+      console.log(`Updating price day ${i}`);
+      console.log(products);
+      
+      /* LOW_COVERAGE */
+      expect(products[0].price).equal(lowUpdateTest(ciPrevState.products[0].price, ciPrevState.products[0].sellIn));
+      /* MEDIUM_COVERAGE */
+      expect(products[1].price).equal(medUpdateTest(ciPrevState.products[1].price, ciPrevState.products[1].sellIn));
+      /* FULL_COVERAGE */
+      expect(products[2].price).equal(fullUpdateTest(ciPrevState.products[2].price, ciPrevState.products[2].sellIn));
+      /* MEGA_COVERAGE */
+      expect(products[3].price).equal(megaUpdateTest(ciPrevState.products[3].price));
+      /* SPECIAL_FULL_COVERAGE */
+      expect(products[4].price).equal(sfUpdateTest(ciPrevState.products[4].price, ciPrevState.products[4].sellIn));
+      /* SUPER_SALE */
+      expect(products[5].price).equal(ssUpdateTest(ciPrevState.products[5].price));
+
+      /* UPDATING PREV STATE FOR NEXT ITERATION */
+      ciPrevState = copyCiState(ci);
+    }
   });
 
   // El price del producto nunca es negativo.
