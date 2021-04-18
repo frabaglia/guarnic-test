@@ -63,49 +63,154 @@ const sfUpdateTest = (p, sellIn) => {
 const ssUpdateTest = p => p - 2
 
 describe("Co Test", function () {
-
-  it("Crear productos y actualizarlos corre sin excepciones.", function () {
+  const ITERATIONS = 3;
+  
+  it("Todos los productos tienen un sellIn que representa la cantidad de días restantes para poder vender el producto.", function () {
     const ci = carInsuarenceExample();
+    expect(ci.products[0].sellIn).to.be.a('number');
+    expect(ci.products[1].sellIn).to.be.a('number');
+    expect(ci.products[2].sellIn).to.be.a('number');
+    expect(ci.products[3].sellIn).to.be.a('number');
+    expect(ci.products[4].sellIn).to.be.a('number');
+    expect(ci.products[5].sellIn).to.be.a('number');
     const products = ci.updatePrice();
-    expect(products.length).equal(6);
+    expect(products[0].sellIn).to.be.a('number');
+    expect(products[1].sellIn).to.be.a('number');
+    expect(products[2].sellIn).to.be.a('number');
+    expect(products[3].sellIn).to.be.a('number');
+    expect(products[4].sellIn).to.be.a('number');
+    expect(products[5].sellIn).to.be.a('number');
   });
 
-  it("updatePrice actualiza los precios correctamente.", function () {
-    const ci = carInsuarenceExample(),
-      ITERATIONS = 3;
-    let products, ciPrevState = copyCiState(ci);
 
-    console.log(`Original products`)
-    console.log(ci.products);
+  it("El price del producto nunca es negativo ni más de 50.", function () {
+    // El price del producto nunca es negativo.
+    // El price de un producto nunca es más de 50.
+
+    ci = carInsuarenceExample();
+    ciPrevState = copyCiState(ci);
+
+    for (let i = 0; i < 100; i++) {
+      products = ci.updatePrice();
+      console.log('it', i)
+      console.log('prod', products)
+      expect(products[0].price).not.to.be.above(50);
+      expect(products[0].price).not.to.be.below(0);
+      expect(products[1].price).not.to.be.above(50);
+      expect(products[1].price).not.to.be.below(0);
+      expect(products[2].price).not.to.be.above(50);
+      expect(products[2].price).not.to.be.below(0);
+      expect(products[3].price).not.to.be.above(50);
+      expect(products[3].price).not.to.be.below(0);
+      expect(products[4].price).not.to.be.above(50);
+      expect(products[4].price).not.to.be.below(0);
+      expect(products[5].price).not.to.be.above(50);
+      expect(products[5].price).not.to.be.below(0);
+      ciPrevState = copyCiState(ci);
+    }    
+  });
+
+  /* LOW_COVERAGE */
+  it(LOW_COVERAGE, function() {
+    // Cuando el producto expira (ya no hay días restantes en sellIn), price se reduce al doble de velocidad.
+    ci = carInsuarenceExample();
+    ciPrevState = copyCiState(ci);
 
     for (let i = 0; i < ITERATIONS; i++) {
       products = ci.updatePrice();
-      console.log(`Updating price day ${i}`);
-      console.log(products);
-
-      /* LOW_COVERAGE */
       expect(products[0].price).equal(lowUpdateTest(ciPrevState.products[0].price, ciPrevState.products[0].sellIn));
-      /* MEDIUM_COVERAGE */
-      expect(products[1].price).equal(medUpdateTest(ciPrevState.products[1].price, ciPrevState.products[1].sellIn));
-      /* FULL_COVERAGE */
-      expect(products[2].price).equal(fullUpdateTest(ciPrevState.products[2].price, ciPrevState.products[2].sellIn));
-      /* MEGA_COVERAGE */
-      expect(products[3].price).equal(megaUpdateTest(ciPrevState.products[3].price));
-      /* SPECIAL_FULL_COVERAGE */
-      expect(products[4].price).equal(sfUpdateTest(ciPrevState.products[4].price, ciPrevState.products[4].sellIn));
-      /* SUPER_SALE */
-      expect(products[5].price).equal(ssUpdateTest(ciPrevState.products[5].price));
-
-      /* UPDATING PREV STATE FOR NEXT ITERATION */
       ciPrevState = copyCiState(ci);
-    }
+    }    
+  });
+  
+
+  describe("updatePrice actualiza los precios correctamente.", function () {
+    let ci, ciPrevState, products;
+    
+      /* LOW_COVERAGE */
+      it(LOW_COVERAGE, function() {
+        // Cuando el producto expira (ya no hay días restantes en sellIn), price se reduce al doble de velocidad.
+        ci = carInsuarenceExample();
+        ciPrevState = copyCiState(ci);
+
+        for (let i = 0; i < ITERATIONS; i++) {
+          products = ci.updatePrice();
+          expect(products[0].price).equal(lowUpdateTest(ciPrevState.products[0].price, ciPrevState.products[0].sellIn));
+          ciPrevState = copyCiState(ci);
+        }    
+      });
+      
+      /* MEDIUM_COVERAGE */
+      it(MEDIUM_COVERAGE, function() {
+        // Cuando el producto expira (ya no hay días restantes en sellIn), price se reduce al doble de velocidad.
+        ci = carInsuarenceExample();
+        ciPrevState = copyCiState(ci);
+
+        for (let i = 0; i < ITERATIONS; i++) {
+          products = ci.updatePrice();
+          expect(products[1].price).equal(medUpdateTest(ciPrevState.products[1].price, ciPrevState.products[1].sellIn));
+          ciPrevState = copyCiState(ci);
+        }    
+      });
+
+      /* FULL_COVERAGE */
+      it(FULL_COVERAGE, function() {
+        // El producto "Full Coverage" aumenta el price en vez de reducirlo a medida que pasa el tiempo.
+        ci = carInsuarenceExample();
+        ciPrevState = copyCiState(ci);
+
+        for (let i = 0; i < ITERATIONS; i++) {
+          products = ci.updatePrice();
+          expect(products[2].price).equal(fullUpdateTest(ciPrevState.products[2].price, ciPrevState.products[2].sellIn));
+          ciPrevState = copyCiState(ci);
+        }
+      });
+
+      /* MEGA_COVERAGE */
+      it(MEGA_COVERAGE, function() {
+        //"Mega Coverage" es un producto legendario así que no baja de precio ni tiene expiración.
+        ci = carInsuarenceExample();
+        ciPrevState = copyCiState(ci);
+
+        for (let i = 0; i < ITERATIONS; i++) {
+          products = ci.updatePrice();
+          expect(products[3].price).equal(megaUpdateTest(ciPrevState.products[3].price));
+          ciPrevState = copyCiState(ci);
+        }
+      });
+
+      /* SPECIAL_FULL_COVERAGE */
+      it(SPECIAL_FULL_COVERAGE, function() {
+        //"Special Full Coverage", al igual que Full Coverage, aumenta el price a medida que sellIn llega a 0:
+        //price aumenta en 2 cuando solo quedan 10 días o menos y por 3 cuando quedan 5 días o menos. Pero...
+        //price baja directo a 0 cuando ya no quedan días y está expirado.
+        ci = carInsuarenceExample();
+        ciPrevState = copyCiState(ci);
+
+        for (let i = 0; i < ITERATIONS; i++) {
+          products = ci.updatePrice();
+          expect(products[4].price).equal(sfUpdateTest(ciPrevState.products[4].price, ciPrevState.products[4].sellIn));
+          ciPrevState = copyCiState(ci);
+        }
+      });
+
+      /* SUPER_SALE */
+      it(SUPER_SALE, function() {
+        // "Super Sale" Baja el price al doble de la velocidad de los productos normales.
+        ci = carInsuarenceExample();
+        ciPrevState = copyCiState(ci);
+
+        for (let i = 0; i < ITERATIONS; i++) {
+          products = ci.updatePrice();
+          expect(products[5].price).equal(ssUpdateTest(ciPrevState.products[5].price));
+          ciPrevState = copyCiState(ci);
+        }
+      });
+
   });
 
-  // El price del producto nunca es negativo.
-  // El producto "Full Coverage" aumenta el price en vez de reducirlo a medida que pasa el tiempo.
-  // El price de un producto nunca es más de 50.
-  // "Mega Coverage" es un producto legendario así que no baja de precio ni tiene expiración.
-  // "Special Full Coverage", al igual que Full Coverage, aumenta el price a medida que sellIn llega a 0:
-  // price aumenta en 2 cuando solo quedan 10 días o menos y por 3 cuando quedan 5 días o menos. Pero...
-  // price baja directo a 0 cuando ya no quedan días y está expirado.
+  // Un producto nunca puede tener su price por encima de 50, sin embargo "Mega Coverage" es un producto legendario y su price es fijo en 80, nunca cambia.
+  // El archivo products_after_30_days.txt muestra el comportamiento de los productos en un período de 30 días.
+  // El producto Super Sale No funciona correctamente, debes implementarlo.
+
 });
