@@ -12,6 +12,8 @@ const {
   SUPER_SALE
 } = require('../src/constants');
 
+const pr = require('../src/priceRepo');
+
 const carInsuarenceExample = () => new CarInsurance([
   new Product(LOW_COVERAGE, 1, 20),
   new Product(MEDIUM_COVERAGE, 1, 20),
@@ -22,45 +24,6 @@ const carInsuarenceExample = () => new CarInsurance([
 ]);
 
 const copyCiState = ci => new CarInsurance(ci.products.map(p => new Product(p.name, p.sellIn, p.price)))
-
-const lowUpdateTest = (p, sellIn) => {
-  p = p - 1
-  if (sellIn < 0) {
-    p = p - 1
-  }
-  return p
-}
-const medUpdateTest = (p, sellIn) => {
-  p = p - 1
-  if (sellIn < 0) {
-    p = p - 1
-  }
-  return p
-}
-const fullUpdateTest = (p, sellIn) => {
-  p = p + 1
-  if (sellIn < 0) {
-    p = p + 1
-  }
-  return p
-}
-const megaUpdateTest = p => 80
-const sfUpdateTest = (p, sellIn) => {
-  p = p + 1
-  if (sellIn <= 10) {
-    if (sellIn <= 5) {
-      p = p + 1
-    }
-    p = p + 1
-  }
-
-  if (sellIn < 0) {
-    p = 0
-  }
-
-  return p
-}
-const ssUpdateTest = p => p - 2
 
 describe("Co Test", function () {
   const ITERATIONS = 3;
@@ -92,18 +55,18 @@ describe("Co Test", function () {
 
     for (let i = 0; i < 100; i++) {
       products = ci.updatePrice();
-      expect(products[0].price).not.to.be.above(50);
-      expect(products[0].price).not.to.be.below(0);
-      expect(products[1].price).not.to.be.above(50);
-      expect(products[1].price).not.to.be.below(0);
-      expect(products[2].price).not.to.be.above(50);
-      expect(products[2].price).not.to.be.below(0);
-      expect(products[3].price).to.be.equal(80);
-      expect(products[3].price).to.be.equal(80);
-      expect(products[4].price).not.to.be.above(50);
-      expect(products[4].price).not.to.be.below(0);
-      expect(products[5].price).not.to.be.above(50);
-      expect(products[5].price).not.to.be.below(0);
+      expect(products[0].price).not.to.be.above(pr.MAX_PRICE);
+      expect(products[0].price).not.to.be.below(pr.MIN_PRICE);
+      expect(products[1].price).not.to.be.above(pr.MAX_PRICE);
+      expect(products[1].price).not.to.be.below(pr.MIN_PRICE);
+      expect(products[2].price).not.to.be.above(pr.MAX_PRICE);
+      expect(products[2].price).not.to.be.below(pr.MIN_PRICE);
+      expect(products[3].price).to.be.equal(pr.MEGA_COVERAGE_DEFAULT_PRICE);
+      expect(products[3].price).to.be.equal(pr.MEGA_COVERAGE_DEFAULT_PRICE);
+      expect(products[4].price).not.to.be.above(pr.MAX_PRICE);
+      expect(products[4].price).not.to.be.below(pr.MIN_PRICE);
+      expect(products[5].price).not.to.be.above(pr.MAX_PRICE);
+      expect(products[5].price).not.to.be.below(pr.MIN_PRICE);
       ciPrevState = copyCiState(ci);
     }    
   });
@@ -116,7 +79,7 @@ describe("Co Test", function () {
 
     for (let i = 0; i < ITERATIONS; i++) {
       products = ci.updatePrice();
-      expect(products[0].price).equal(lowUpdateTest(ciPrevState.products[0].price, ciPrevState.products[0].sellIn));
+      expect(products[0].price).equal(pr.lowUpdate(ciPrevState.products[0].price, ciPrevState.products[0].sellIn));
       ciPrevState = copyCiState(ci);
     }    
   });
@@ -133,7 +96,7 @@ describe("Co Test", function () {
 
         for (let i = 0; i < ITERATIONS; i++) {
           products = ci.updatePrice();
-          expect(products[0].price).equal(lowUpdateTest(ciPrevState.products[0].price, ciPrevState.products[0].sellIn));
+          expect(products[0].price).equal(pr.lowUpdate(ciPrevState.products[0].price, ciPrevState.products[0].sellIn));
           ciPrevState = copyCiState(ci);
         }    
       });
@@ -146,7 +109,7 @@ describe("Co Test", function () {
 
         for (let i = 0; i < ITERATIONS; i++) {
           products = ci.updatePrice();
-          expect(products[1].price).equal(medUpdateTest(ciPrevState.products[1].price, ciPrevState.products[1].sellIn));
+          expect(products[1].price).equal(pr.medUpdate(ciPrevState.products[1].price, ciPrevState.products[1].sellIn));
           ciPrevState = copyCiState(ci);
         }    
       });
@@ -159,7 +122,7 @@ describe("Co Test", function () {
 
         for (let i = 0; i < ITERATIONS; i++) {
           products = ci.updatePrice();
-          expect(products[2].price).equal(fullUpdateTest(ciPrevState.products[2].price, ciPrevState.products[2].sellIn));
+          expect(products[2].price).equal(pr.fullUpdate(ciPrevState.products[2].price, ciPrevState.products[2].sellIn));
           ciPrevState = copyCiState(ci);
         }
       });
@@ -173,7 +136,7 @@ describe("Co Test", function () {
 
         for (let i = 0; i < ITERATIONS; i++) {
           products = ci.updatePrice();
-          expect(products[3].price).equal(megaUpdateTest(ciPrevState.products[3].price));
+          expect(products[3].price).equal(pr.megaUpdate(ciPrevState.products[3].price));
           ciPrevState = copyCiState(ci);
         }
       });
@@ -188,7 +151,7 @@ describe("Co Test", function () {
 
         for (let i = 0; i < ITERATIONS; i++) {
           products = ci.updatePrice();
-          expect(products[4].price).equal(sfUpdateTest(ciPrevState.products[4].price, ciPrevState.products[4].sellIn));
+          expect(products[4].price).equal(pr.sfUpdate(ciPrevState.products[4].price, ciPrevState.products[4].sellIn));
           ciPrevState = copyCiState(ci);
         }
       });
@@ -201,7 +164,7 @@ describe("Co Test", function () {
 
         for (let i = 0; i < ITERATIONS; i++) {
           products = ci.updatePrice();
-          expect(products[5].price).equal(ssUpdateTest(ciPrevState.products[5].price));
+          expect(products[5].price).equal(pr.ssUpdate(ciPrevState.products[5].price));
           ciPrevState = copyCiState(ci);
         }
       });

@@ -1,17 +1,19 @@
 const {
+  LOW_COVERAGE,
+  MEDIUM_COVERAGE,
   FULL_COVERAGE,
   MEGA_COVERAGE,
   SPECIAL_FULL_COVERAGE,
   SUPER_SALE
 } = require('./constants');
 
-const MEGA_COVERAGE_DEFAULT_PRICE = 80;
+const pr = require('../src/priceRepo');
 
 class Product {
   constructor(name, sellIn, price) {
     this.name = name;
     this.sellIn = sellIn;
-    if (name === MEGA_COVERAGE) this.price = MEGA_COVERAGE_DEFAULT_PRICE;
+    if (name === MEGA_COVERAGE) this.price = pr.MEGA_COVERAGE_DEFAULT_PRICE;
     else this.price = price;
   }
 }
@@ -20,57 +22,43 @@ class CarInsurance {
   constructor(products = []) {
     this.products = products;
   }
+
   updatePrice() {
     for (var i = 0; i < this.products.length; i++) {
-      if (this.products[i].name === SUPER_SALE) {
-        this.products[i].price = Math.max(this.products[i].price - 2, 0);
-      } else {
-        if (this.products[i].name != FULL_COVERAGE && this.products[i].name != SPECIAL_FULL_COVERAGE) {
-          if (this.products[i].price > 0) {
-            if (this.products[i].name != MEGA_COVERAGE) {
-              this.products[i].price = this.products[i].price - 1;
-            }
-          }
-        } else {
-          if (this.products[i].price < 50) {
-            this.products[i].price = this.products[i].price + 1;
-            if (this.products[i].name == SPECIAL_FULL_COVERAGE) {
-              if (this.products[i].sellIn < 11) {
-                if (this.products[i].price < 50) {
-                  this.products[i].price = this.products[i].price + 1;
-                }
-              }
-              if (this.products[i].sellIn < 6) {
-                if (this.products[i].price < 50) {
-                  this.products[i].price = this.products[i].price + 1;
-                }
-              }
-            }
-          }
-        }
-        
-        if (this.products[i].sellIn < 0) {
-          if (this.products[i].name != FULL_COVERAGE) {
-            if (this.products[i].name != SPECIAL_FULL_COVERAGE) {
-              if (this.products[i].price > 0) {
-                if (this.products[i].name != MEGA_COVERAGE) {
-                  this.products[i].price = this.products[i].price - 1;
-                }
-              }
-            } else {
-              this.products[i].price = this.products[i].price - this.products[i].price;
-            }
-          } else {
-            if (this.products[i].price < 50) {
-              this.products[i].price = this.products[i].price + 1;
-            }
-          }
-        }
+      const product = this.products[i];
+      let price = product.price;
+      let sellIn = product.sellIn;
+
+      switch (product.name) {
+        case LOW_COVERAGE:
+          price = pr.lowUpdate(product.price, product.sellIn);
+          break;
+        case MEDIUM_COVERAGE:
+          price = pr.medUpdate(product.price, product.sellIn);
+          break;
+        case FULL_COVERAGE:
+          price = pr.fullUpdate(product.price, product.sellIn);
+          break;
+        case MEGA_COVERAGE:
+          price = pr.megaUpdate(product.price, product.sellIn);
+          break;
+        case SPECIAL_FULL_COVERAGE:
+          price = pr.sfUpdate(product.price, product.sellIn);
+          break;
+        case SUPER_SALE:
+          price = pr.ssUpdate(product.price, product.sellIn);
+          break;
+
+        default:
+          price = pr.lowUpdate(product.price, product.sellIn);
+          break;
       }
 
-      if (this.products[i].name != MEGA_COVERAGE) {
-        this.products[i].sellIn = this.products[i].sellIn - 1;
+      if (product.name != MEGA_COVERAGE) {
+        sellIn = this.products[i].sellIn - 1;
       }
+      product.price = pr.priceLimit(price, product.name);
+      product.sellIn = sellIn;
     }
 
     return this.products;
