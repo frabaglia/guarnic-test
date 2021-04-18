@@ -92,8 +92,6 @@ describe("Co Test", function () {
 
     for (let i = 0; i < 100; i++) {
       products = ci.updatePrice();
-      console.log('it', i)
-      console.log('prod', products)
       expect(products[0].price).not.to.be.above(50);
       expect(products[0].price).not.to.be.below(0);
       expect(products[1].price).not.to.be.above(50);

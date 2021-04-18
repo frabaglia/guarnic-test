@@ -20,7 +20,7 @@ class CarInsurance {
   updatePrice() {
     for (var i = 0; i < this.products.length; i++) {
       if (this.products[i].name === SUPER_SALE) {
-        this.products[i].price = this.products[i].price - 2;
+        this.products[i].price = Math.max(this.products[i].price - 2, 0);
       } else {
         if (this.products[i].name != FULL_COVERAGE && this.products[i].name != SPECIAL_FULL_COVERAGE) {
           if (this.products[i].price > 0) {
