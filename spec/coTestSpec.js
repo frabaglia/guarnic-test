@@ -207,7 +207,4 @@ describe("Co Test", function () {
       });
 
   });
-  // El archivo products_after_30_days.txt muestra el comportamiento de los productos en un período de 30 días.
-  // El producto Super Sale No funciona correctamente, debes implementarlo.
-
 });
