@@ -44,7 +44,7 @@ const fullUpdateTest = (p, sellIn) => {
   }
   return p
 }
-const megaUpdateTest = p => p
+const megaUpdateTest = p => 80
 const sfUpdateTest = (p, sellIn) => {
   p = p + 1
   if (sellIn <= 10) {
@@ -98,8 +98,8 @@ describe("Co Test", function () {
       expect(products[1].price).not.to.be.below(0);
       expect(products[2].price).not.to.be.above(50);
       expect(products[2].price).not.to.be.below(0);
-      expect(products[3].price).not.to.be.above(50);
-      expect(products[3].price).not.to.be.below(0);
+      expect(products[3].price).to.be.equal(80);
+      expect(products[3].price).to.be.equal(80);
       expect(products[4].price).not.to.be.above(50);
       expect(products[4].price).not.to.be.below(0);
       expect(products[5].price).not.to.be.above(50);
