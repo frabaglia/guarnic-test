@@ -167,6 +167,7 @@ describe("Co Test", function () {
       /* MEGA_COVERAGE */
       it(MEGA_COVERAGE, function() {
         //"Mega Coverage" es un producto legendario así que no baja de precio ni tiene expiración.
+        // Un producto nunca puede tener su price por encima de 50, sin embargo "Mega Coverage" es un producto legendario y su price es fijo en 80, nunca cambia.
         ci = carInsuarenceExample();
         ciPrevState = copyCiState(ci);
 
@@ -206,8 +207,6 @@ describe("Co Test", function () {
       });
 
   });
-
-  // Un producto nunca puede tener su price por encima de 50, sin embargo "Mega Coverage" es un producto legendario y su price es fijo en 80, nunca cambia.
   // El archivo products_after_30_days.txt muestra el comportamiento de los productos en un período de 30 días.
   // El producto Super Sale No funciona correctamente, debes implementarlo.
 

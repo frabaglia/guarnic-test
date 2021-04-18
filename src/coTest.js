@@ -5,11 +5,14 @@ const {
   SUPER_SALE
 } = require('./constants');
 
+const MEGA_COVERAGE_DEFAULT_PRICE = 80;
+
 class Product {
   constructor(name, sellIn, price) {
     this.name = name;
     this.sellIn = sellIn;
-    this.price = price;
+    if (name === MEGA_COVERAGE) this.price = MEGA_COVERAGE_DEFAULT_PRICE;
+    else this.price = price;
   }
 }
 
