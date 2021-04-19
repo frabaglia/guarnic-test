@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha spec/*.js",
-    "after-30-days": "node after-30-days.js"
+    "after-30-days": "node after-30-days.js",
+    "generate-30-days": "node generate-30-days.js"
   },
   "repository": {
     "type": "git",

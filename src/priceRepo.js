@@ -29,9 +29,6 @@ class PriceRepo {
     }
     fullUpdate(p, sellIn) {
         p = p + 1
-        if (sellIn < 0) {
-            p = p + 1
-        }
         return p
     }
     megaUpdate() {
